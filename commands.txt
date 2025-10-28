@@ -1,0 +1,9 @@
+# Navigate to the project folder
+cd C:\Users\HPEliteBook-1040 G2\Desktop\signverse-project
+
+# Activate the virtual environment (PowerShell command)
+.\venv\Scripts\Activate
+
+python app.py
+
+python setup_and_run.py

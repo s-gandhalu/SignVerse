@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignVerse Pro - AI Sign Language Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-light: #5AC8FA;
+            --primary-dark: #0051D5;
+            --bg-dark: #000000;
+            --bg-card: #1C1C1E;
+            --bg-elevated: #2C2C2E;
+            --bg-tertiary: #3A3A3C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #98989D;
+            --text-tertiary: #636366;
+            --border: #38383A;
+            --success: #30D158;
+            --warning: #FFD60A;
+            --danger: #FF453A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 400px;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .control-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .slider-container {
+            background: var(--bg-elevated);
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .status-card {
+            background: var(--bg-elevated);
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Main Video Area */
+        .main-content {
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .video-header {
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fps-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .fps-value {
+            color: var(--primary);
+        }
+
+        .video-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        video, canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        canvas {
+            z-index: 2;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .video-control-btn {
+            padding: 10px 16px;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .video-control-btn:hover {
+            background: rgba(44, 44, 46, 0.95);
+            border-color: var(--primary);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .output-card {
+            background: linear-gradient(135deg, #1C1C3E 0%, #1A1A2E 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(90, 200, 250, 0.15);
+            position: relative;
+        }
+
+        .output-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+            letter-spacing: 0.6px;
+        }
+
+        .output-sentence {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+            min-height: 50px;
+            color: var(--text-primary);
+            word-wrap: break-word;
+            margin-bottom: 12px;
+        }
+
+        .output-word {
+            font-size: 15px;
+            color: var(--primary-light);
+            font-style: italic;
+        }
+
+        .sentence-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .icon-btn {
+            padding: 8px 14px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--primary);
+        }
+
+        .icon-btn.speaking {
+            background: var(--primary);
+            color: white;
+            animation: speakPulse 1.5s infinite;
+        }
+
+        @keyframes speakPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .detections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detection-item {
+            background: var(--bg-elevated);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            transition: all 0.15s;
+        }
+
+        .detection-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(3px);
+        }
+
+        .detection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .detection-class {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .detection-confidence {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .confidence-bar {
+            height: 3px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.3s ease;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .history-time {
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+
+        .history-text {
+            margin-top: 4px;
+            color: var(--text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 16px;
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        /* Text-to-Sign Panel */
+        .text-input-group {
+            margin-bottom: 16px;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .sign-guide-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sign-guide-item {
+            background: var(--bg-elevated);
+            padding: 14px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-light);
+        }
+
+        .sign-guide-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 6px;
+        }
+
+        .sign-guide-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border);
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">✋</div>
+                    <span>SignVerse</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="control-section">
+                    <div class="section-title">Camera Controls</div>
+                    <button class="btn btn-primary" id="startBtn" onclick="startWebcam()">
+                        <span>📷</span> Start Detection
+                    </button>
+                    <button class="btn btn-secondary" id="stopBtn" onclick="stopWebcam()" disabled>
+                        <span>⏹</span> Stop
+                    </button>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Actions</div>
+                    <button class="btn btn-secondary" onclick="addSpace()">
+                        <span>⎵</span> Add Space
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearDetections()">
+                        <span>🗑</span> Clear All
+                    </button>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Settings</div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Confidence</span>
+                            <span class="slider-value"><span id="thresholdValue">50</span>%</span>
+                        </div>
+                        <input type="range" id="confidenceSlider" min="0" max="1" step="0.05" value="0.5">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">System Status</div>
+                    <div class="status-card">
+                        <div class="status-row">
+                            <span class="status-label">Model</span>
+                            <span class="status-value" id="modelStatus">
+                                <span class="status-dot"></span>
+                                Ready
+                            </span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-label">Classes</span>
+                            <span class="status-value">39</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-label">Detections</span>
+                            <span class="status-value" id="detectionCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="video-header">
+                <h2 style="font-size: 17px; font-weight: 600;">Live Detection</h2>
+                <div class="fps-badge">
+                    <span>FPS:</span>
+                    <span class="fps-value" id="fps">0</span>
+                </div>
+            </div>
+            
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+                
+                <div class="video-controls">
+                    <button class="video-control-btn" onclick="toggleMirror()">🔄 Mirror</button>
+                    <button class="video-control-btn" id="captureBtn" onclick="captureFrame()" disabled>📸 Capture</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Translation</h2>
+                <div class="panel-tabs">
+                    <button class="tab-btn active" onclick="switchTab('sign-to-text')">Sign → Text</button>
+                    <button class="tab-btn" onclick="switchTab('text-to-sign')">Text → Sign</button>
+                </div>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Sign to Text Tab -->
+                <div id="sign-to-text-tab" class="tab-content active">
+                    <div class="output-card">
+                        <div class="output-label">Sentence</div>
+                        <div class="output-sentence" id="outputSentence">Start signing to see translation...</div>
+                        <div class="output-word" id="outputWord"></div>
+                        
+                        <div class="sentence-actions">
+                            <button class="icon-btn" id="speakBtn" onclick="speakSentence()">
+                                <span>🔊</span> Speak
+                            </button>
+                            <button class="icon-btn" onclick="copySentence()">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Current Detections</div>
+                    <div class="detections-list" id="detectionsList">
+                        <div class="empty-state">No active detections</div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div class="section-title">History</div>
+                        <div id="historyList">
+                            <div class="empty-state">No history yet</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text to Sign Tab -->
+                <div id="text-to-sign-tab" class="tab-content">
+                    <div class="text-input-group">
+                        <div class="section-title">Enter Text</div>
+                        <textarea 
+                            class="text-input" 
+                            id="textToSignInput" 
+                            placeholder="Type words or letters to see sign language instructions..."
+                        ></textarea>
+                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="convertTextToSign()">
+                            <span>✨</span> Convert to Signs
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div class="section-title">Sign Instructions</div>
+                        <div class="sign-guide-list" id="signGuideList">
+                            <div class="empty-state">Enter text above to see sign language instructions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:5000';
+        
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let isRunning = false;
+        let isMirrored = false;
+        let detectionLog = [];
+        let frameCount = 0;
+        let lastTime = Date.now();
+        let processingInterval;
+        let isProcessing = false;
+        let isSpeaking = false;
+        
+        // UI Elements
+        const detectionCountElement = document.getElementById('detectionCount');
+        const detectionsList = document.getElementById('detectionsList');
+        const outputSentenceElement = document.getElementById('outputSentence');
+        const outputWordElement = document.getElementById('outputWord');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const speakBtn = document.getElementById('speakBtn');
+
+        // Confidence slider
+        document.getElementById('confidenceSlider').addEventListener('input', (e) => {
+            document.getElementById('thresholdValue').textContent = Math.round(e.target.value * 100);
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            if (tabName === 'sign-to-text') {
+                tabs[0].classList.add('active');
+                document.getElementById('sign-to-text-tab').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('text-to-sign-tab').classList.add('active');
+            }
+        }
+
+        async function startWebcam() {
+            if (isRunning) return;
+            
+            loadingOverlay.classList.add('active');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    }
+                });
+                
+                video.srcObject = stream;
+                
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    video.play();
+                    
+                    isRunning = true;
+                    processingInterval = setInterval(processFrame, 100);
+                    
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    document.getElementById('captureBtn').disabled = false;
+                    document.getElementById('modelStatus').innerHTML = '<span class="status-dot"></span>Running';
+                    
+                    loadingOverlay.classList.remove('active');
+                };
+            } catch (err) {
+                alert('Camera access denied: ' + err.message);
+                loadingOverlay.classList.remove('active');
+            }
+        }
+
+        function stopWebcam() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            clearInterval(processingInterval);
+            
+            const stream = video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('captureBtn').disabled = true;
+            document.getElementById('modelStatus').innerHTML = '<span class="status-dot"></span>Ready';
+        }
+
+        function toggleMirror() {
+            isMirrored = !isMirrored;
+            video.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+            canvas.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+        }
+
+        async function clearDetections() {
+            try {
+                await fetch(`${API_BASE}/api/clear-state`, { method: 'POST' });
+                
+                outputSentenceElement.textContent = 'Start signing to see translation...';
+                outputWordElement.textContent = '';
+                detectionCountElement.textContent = '0';
+                detectionsList.innerHTML = '<div class="empty-state">No active detections</div>';
+                document.getElementById('historyList').innerHTML = '<div class="empty-state">Cleared</div>';
+                detectionLog = [];
+            } catch (err) {
+                console.error('Clear failed:', err);
+            }
+        }
+
+        async function addSpace() {
+            try {
+                const response = await fetch(`${API_BASE}/api/add-space`, { method: 'POST' });
+                const data = await response.json();
+                if (data.sentence) {
+                    outputSentenceElement.textContent = data.sentence;
+                }
+            } catch (err) {
+                console.error('Add space failed:', err);
+            }
+        }
+
+        async function processFrame() {
+            if (!isRunning || isProcessing) return;
+            
+            isProcessing = true;
+            
+            ctx.save();
+            if (isMirrored) {
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+            } else {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
+            ctx.restore();
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            const confidence = parseFloat(document.getElementById('confidenceSlider').value);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/detect-continuous`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData, confidence: confidence })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.image) {
+                        const img = new Image();
+                        img.onload = () => {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        };
+                        img.src = 'data:image/jpeg;base64,' + data.image;
+                    }
+                    
+                    updateSmoothedState(data.smoothed_state);
+                    updateRawDetectionsList(data.raw_detections);
+                }
+            } catch (err) {
+                console.error('Detection error:', err);
+            } finally {
+                isProcessing = false;
+            }
+
+            frameCount++;
+            updateFPS();
+        }
+
+        function updateSmoothedState(smoothedState) {
+            const sentence = smoothedState.sentence || 'Start signing to see translation...';
+            outputSentenceElement.textContent = sentence;
+            outputWordElement.textContent = smoothedState.word ? `Building: ${smoothedState.word}...` : '';
+            
+            if (smoothedState.status === 'confirmed') {
+                detectionLog.unshift({
+                    timestamp: new Date().toLocaleTimeString(),
+                    sign: smoothedState.last_sign
+                });
+                updateHistoryList();
+            }
+        }
+
+        function updateRawDetectionsList(rawDetections) {
+            detectionCountElement.textContent = rawDetections.length;
+
+            if (rawDetections.length === 0) {
+                detectionsList.innerHTML = '<div class="empty-state">No active detections</div>';
+                return;
+            }
+
+            detectionsList.innerHTML = rawDetections.slice(0, 5).map(det => `
+                <div class="detection-item">
+                    <div class="detection-header">
+                        <span class="detection-class">${det.class}</span>
+                        <span class="detection-confidence">${(det.confidence * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${det.confidence * 100}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            
+            if (detectionLog.length === 0) {
+                historyList.innerHTML = '<div class="empty-state">No history yet</div>';
+                return;
+            }
+            
+            historyList.innerHTML = detectionLog.slice(0, 20).map(log => `
+                <div class="history-item">
+                    <div class="history-time">${log.timestamp}</div>
+                    <div class="history-text">${log.sign}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateFPS() {
+            if (frameCount % 10 === 0) {
+                const now = Date.now();
+                const fpsValue = Math.round(10000 / (now - lastTime));
+                document.getElementById('fps').textContent = fpsValue;
+                lastTime = now;
+            }
+        }
+
+        function captureFrame() {
+            const link = document.createElement('a');
+            link.download = `signverse_${Date.now()}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
+        }
+
+        // Text-to-Speech
+        function speakSentence() {
+            const text = outputSentenceElement.textContent;
+            
+            if (text === 'Start signing to see translation...') {
+                return;
+            }
+
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+                speakBtn.innerHTML = '<span>🔊</span> Speak';
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            utterance.onstart = () => {
+                isSpeaking = true;
+                speakBtn.classList.add('speaking');
+                speakBtn.innerHTML = '<span>⏸</span> Stop';
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+                speakBtn.innerHTML = '<span>🔊</span> Speak';
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function copySentence() {
+            const text = outputSentenceElement.textContent;
+            if (text === 'Start signing to see translation...') return;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target.closest('.icon-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span>✓</span> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+
+        // Text-to-Sign conversion
+        async function convertTextToSign() {
+            const text = document.getElementById('textToSignInput').value.trim();
+            const signGuideList = document.getElementById('signGuideList');
+            
+            if (!text) {
+                signGuideList.innerHTML = '<div class="empty-state">Please enter some text</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/text-to-sign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+
+                if (data.signs && data.signs.length > 0) {
+                    signGuideList.innerHTML = data.signs.map(sign => `
+                        <div class="sign-guide-item">
+                            <div class="sign-guide-header">${sign.sign}</div>
+                            <div class="sign-guide-desc">${sign.description}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    signGuideList.innerHTML = '<div class="empty-state">No signs found for this text</div>';
+                }
+            } catch (err) {
+                console.error('Text-to-sign error:', err);
+                signGuideList.innerHTML = '<div class="empty-state">Error converting text</div>';
+            }
+        }
+
+        // Make functions global
+        window.startWebcam = startWebcam;
+        window.stopWebcam = stopWebcam;
+        window.toggleMirror = toggleMirror;
+        window.clearDetections = clearDetections;
+        window.addSpace = addSpace;
+        window.captureFrame = captureFrame;
+        window.switchTab = switchTab;
+        window.speakSentence = speakSentence;
+        window.copySentence = copySentence;
+        window.convertTextToSign = convertTextToSign;
+    </script>
+</body>
+</html>
