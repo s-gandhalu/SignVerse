@@ -4,6 +4,17 @@ cd C:\Users\HPEliteBook-1040 G2\Desktop\signverse-project
 # Activate the virtual environment (PowerShell command)
 .\venv\Scripts\Activate
 
-python app.py
+python setup_and_run.py
+
+=================================================================
+
+Step,Command,Description
+1. Clone Repo,*git clone https://github.com/s-gandhalu/SignVerse.git*,Downloads your project files.
+2. Navigate,cd SignVerse,Enters your project directory.
+3. Create Venv,python -m venv venv,"Creates a new, isolated environment named venv."
+4. Activate Venv,.\venv\Scripts\Activate,Activates the environment. The prompt will show (venv).
+
+# Install all required packages using your file
+pip install -r requirements.txt
 
 python setup_and_run.py
