@@ -545,6 +545,33 @@
             padding: 14px;
             border-radius: 8px;
             border-left: 3px solid var(--primary-light);
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .sign-guide-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            flex-shrink: 0;
+            border: 2px solid var(--border);
+        }
+
+        .sign-guide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .sign-guide-content {
+            flex: 1;
         }
 
         .sign-guide-header {
@@ -1102,8 +1129,13 @@
                 if (data.signs && data.signs.length > 0) {
                     signGuideList.innerHTML = data.signs.map(sign => `
                         <div class="sign-guide-item">
-                            <div class="sign-guide-header">${sign.sign}</div>
-                            <div class="sign-guide-desc">${sign.description}</div>
+                            <div class="sign-guide-image">
+                                ${sign.image_url ? `<img src="${sign.image_url}" alt="${sign.sign}" onerror="this.style.display='none'; this.parentElement.textContent='✋';">` : '✋'}
+                            </div>
+                            <div class="sign-guide-content">
+                                <div class="sign-guide-header">${sign.sign}</div>
+                                <div class="sign-guide-desc">${sign.description}</div>
+                            </div>
                         </div>
                     `).join('');
                 } else {
